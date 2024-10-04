@@ -99,7 +99,18 @@ def get_patient_report():
     connection = connect_to_db()
     cursor = connection.cursor()
 
-    
+    select_query = """
+    SELECT p.patient_id, p.full_name, p.date_of_birth, p.gender, p.address, d.full_name as doctor_name, a.reason, a.appointment_date
+    FROM patients p
+    JOIN appointments a ON p.patient_id = a.patient_id
+    JOIN doctors d ON a.doctor_id = d.doctor_id
+    """
+    cursor.execute(select_query)
+    patient_report = cursor.fetchall()
+    headers = ["No", "Patient name", "Birthday ", "Gender", "Address", "Doctor name", "Reason", "Date"]
+    print(tabulate(patient_report, headers=headers))
+
+    connection.close()
 
 if __name__ == "__main__":
-    add_doctors()
+    get_patient_report()
